@@ -1,0 +1,136 @@
+Academic Library Book Management System – An Example
+1. PROJECT OVERVIEW
+Project Title: Academic Library Book Management System
+Tech Stack: MERN (MongoDB, Express, React, Node.js)
+
+2. PROBLEM STATEMENT
+Academic libraries often rely on manual or semi-digital systems for managing books.
+Students face difficulty locating books and checking availability.
+Manual issuing and returning of books leads to errors, delays, and poor record management.
+Librarians struggle with tracking inventory, overdue books, and user activity efficiently.
+
+3. PROPOSED SOLUTION
+A web-based Library Management System that allows users to search, reserve, issue, and return books online.
+The system provides role-based access for different users.
+Real-time book availability and status tracking improves efficiency.
+Automated workflows reduce manual work and improve accuracy.
+
+4. USER ROLES & PERMISSIONS
+A. Student
+Can Register and Login
+
+Can Search and View Available Books
+
+Can Request Book Issue
+
+Can View Issued Books and Due Dates
+
+Can Return Books and View History
+
+B. Faculty
+Can Login
+
+Can Search and View Books
+
+Can Issue Books (Longer Loan Period)
+
+Can Renew Issued Books
+
+Can View Issue History
+
+C. Librarian
+Can Login (Secure Librarian Dashboard)
+
+Can Approve/Reject Book Issue Requests
+
+Can Issue and Receive Returned Books
+
+Can Manage Book Inventory Status
+
+Can View Overdue and Fine Reports
+
+D. Admin
+Can Login (Admin Dashboard)
+
+Can Add/Edit/Delete Books
+
+Can Manage Users (Students, Faculty, Librarians)
+
+Can Assign Roles
+
+Can View System Reports and Analytics
+
+5. DATABASE STRUCTURE (Schemas)
+A. User Schema:
+Name (String)
+
+Email (String, Unique)
+
+Password (Hashed)
+
+Role (String: 'student', 'faculty', 'librarian', 'admin')
+
+B. Book Schema:
+Title (String)
+
+Author (String)
+
+ISBN (String, Unique)
+
+Category (String, e.g., "Computer Science")
+
+Publisher (String)
+
+TotalCopies (Number)
+
+AvailableCopies (Number)
+
+ShelfLocation (String)
+
+C. Issue Schema:
+UserID (Reference to User)
+
+BookID (Reference to Book)
+
+IssueDate (Timestamp)
+
+DueDate (Timestamp)
+
+ReturnDate (Timestamp, Nullable)
+
+Status (String: 'Issued', 'Returned', 'Overdue')
+
+6. FEATURE WORKFLOW (The "User Journey")
+Login: User logs in and lands on the "Library Dashboard".
+
+Search: User searches for a book by title or author.
+
+Request: User clicks "Request Issue" on a book.
+
+Database: System creates an issue request with status 'Pending'.
+
+Librarian View: Librarian sees the request and approves it.
+
+Update: Book availability is updated in the database.
+
+Feedback: User sees the book marked as "Issued" with a due date.
+
+7. API ENDPOINTS (The URL Rules)
+POST /api/auth/register -> Register user
+
+POST /api/auth/login -> Login user
+
+GET /api/books -> Get list of books
+
+POST /api/books -> Add new book (Admin only)
+
+PUT /api/books/:id -> Update book details (Admin only)
+
+DELETE /api/books/:id -> Delete book (Admin only)
+
+POST /api/issues/request -> Request book issue
+
+PUT /api/issues/:id/approve -> Approve issue (Librarian only)
+
+PUT /api/issues/:id/return -> Return book
+
