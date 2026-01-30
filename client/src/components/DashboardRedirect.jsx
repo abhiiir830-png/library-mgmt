@@ -25,10 +25,10 @@ const DashboardRedirect = () => {
           navigate('/dashboard/librarian');
           break;
         case 'admin':
-          navigate('/books');
+          navigate('/admin/dashboard');
           break;
         default:
-          navigate('/books');
+          navigate('/dashboard/student');
       }
     }
   }, [user, loading, navigate]);

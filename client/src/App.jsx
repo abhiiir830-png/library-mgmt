@@ -7,6 +7,9 @@ import AddEditBook from './pages/AddEditBook';
 import StudentDashboard from './pages/StudentDashboard';
 import FacultyDashboard from './pages/FacultyDashboard';
 import LibrarianDashboard from './pages/LibrarianDashboard';
+import AdminDashboard from './pages/AdminDashboard';
+import UserManagement from './pages/UserManagement';
+import Reports from './pages/Reports';
 import DashboardRedirect from './components/DashboardRedirect';
 import './App.css';
 
@@ -83,6 +86,30 @@ function App() {
       />
       
       {/* Admin Only Routes */}
+      <Route
+        path="/admin/dashboard"
+        element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/users"
+        element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <UserManagement />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/reports"
+        element={
+          <ProtectedRoute allowedRoles={['admin', 'librarian']}>
+            <Reports />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/books/add"
         element={
