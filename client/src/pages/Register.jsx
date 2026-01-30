@@ -35,7 +35,7 @@ const Register = () => {
     );
     
     if (result.success) {
-      navigate('/books');
+      navigate('/dashboard');
     } else {
       setError(result.message);
     }
