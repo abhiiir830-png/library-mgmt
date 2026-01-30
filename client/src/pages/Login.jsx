@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import toast from '../utils/toast';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -62,7 +63,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            style={styles.button}
+            style={{...styles.button, ...(loading ? styles.buttonDisabled : {})}}
           >
             {loading ? 'Logging in...' : 'Login'}
           </button>
@@ -127,6 +128,10 @@ const styles = {
     fontSize: '16px',
     cursor: 'pointer',
     fontWeight: '500',
+  },
+  buttonDisabled: {
+    backgroundColor: '#ccc',
+    cursor: 'not-allowed',
   },
   error: {
     backgroundColor: '#fee',
