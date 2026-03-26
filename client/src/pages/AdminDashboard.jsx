@@ -1,237 +1,81 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
+import PageLayout from '../components/PageLayout';
+
+const STAT_META = [
+  { key:'totalBooks',           label:'Total Books',          icon:'📚', color:'#dbeafe', iconColor:'#2563eb' },
+  { key:'totalUsers',           label:'Total Users',          icon:'👥', color:'#dcfce7', iconColor:'#16a34a' },
+  { key:'totalIssues',          label:'Total Issues',         icon:'📋', color:'#fef9c3', iconColor:'#b45309' },
+  { key:'totalAvailableCopies', label:'Available Copies',     icon:'✅', color:'#f3e8ff', iconColor:'#7c3aed' },
+  { key:'recentIssues',         label:'Issues (Last 30 Days)',icon:'📈', color:'#cffafe', iconColor:'#0891b2' },
+];
 
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState('overview');
-  const { user, logout } = useAuth();
+  const [analytics, setAnalytics] = useState(null);
+  const [loading, setLoading]     = useState(true);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    api.get('/reports/analytics')
+      .then(r => setAnalytics(r.data.data))
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
+  const ov = analytics?.overview || {};
 
   return (
-    <div style={styles.container}>
-      <header style={styles.header}>
-        <h1 style={styles.headerTitle}>Admin Dashboard</h1>
-        <div style={styles.headerRight}>
-          <span style={styles.userInfo}>{user?.name}</span>
-          <button onClick={logout} style={styles.logoutButton}>
-            Logout
-          </button>
+    <PageLayout>
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">Dashboard Overview</h1>
+          <p className="page-sub">Welcome back, {user?.name} — here's what's happening today.</p>
         </div>
-      </header>
-
-      <div style={styles.tabs}>
-        <button
-          onClick={() => setActiveTab('overview')}
-          style={{
-            ...styles.tab,
-            ...(activeTab === 'overview' ? styles.activeTab : {}),
-          }}
-        >
-          Overview
-        </button>
-        <button
-          onClick={() => setActiveTab('books')}
-          style={{
-            ...styles.tab,
-            ...(activeTab === 'books' ? styles.activeTab : {}),
-          }}
-        >
-          Manage Books
-        </button>
-        <button
-          onClick={() => setActiveTab('users')}
-          style={{
-            ...styles.tab,
-            ...(activeTab === 'users' ? styles.activeTab : {}),
-          }}
-        >
-          Manage Users
-        </button>
-        <button
-          onClick={() => setActiveTab('reports')}
-          style={{
-            ...styles.tab,
-            ...(activeTab === 'reports' ? styles.activeTab : {}),
-          }}
-        >
-          Reports
-        </button>
+        <Link to="/books/add" className="btn btn-primary">+ Add New Book</Link>
       </div>
 
-      <div style={styles.content}>
-        {activeTab === 'overview' && (
-          <div style={styles.overview}>
-            <h2 style={styles.sectionTitle}>Welcome to Admin Dashboard</h2>
-            <div style={styles.quickLinks}>
-              <Link to="/books" style={styles.quickLink}>
-                <div style={styles.quickLinkCard}>
-                  <h3>📚 Manage Books</h3>
-                  <p>Add, edit, or delete books</p>
-                </div>
-              </Link>
-              <Link to="/admin/users" style={styles.quickLink}>
-                <div style={styles.quickLinkCard}>
-                  <h3>👥 Manage Users</h3>
-                  <p>View and manage all users</p>
-                </div>
-              </Link>
-              <Link to="/admin/reports" style={styles.quickLink}>
-                <div style={styles.quickLinkCard}>
-                  <h3>📊 Reports & Analytics</h3>
-                  <p>View system statistics</p>
-                </div>
-              </Link>
+      {/* Stat cards */}
+      {loading ? (
+        <div className="loading-state"><div className="spinner" /></div>
+      ) : (
+        <div className="grid-4 mb-24">
+          {STAT_META.map(({ key, label, icon, color, iconColor }) => (
+            <div key={key} className="stat-card">
+              <div className="stat-icon-wrap" style={{ backgroundColor: color }}>
+                <span style={{ color: iconColor }}>{icon}</span>
+              </div>
+              <div className="stat-body">
+                <div className="stat-value">{ov[key] ?? '—'}</div>
+                <div className="stat-label">{label}</div>
+              </div>
             </div>
-          </div>
-        )}
+          ))}
+        </div>
+      )}
 
-        {activeTab === 'books' && (
-          <div>
-            <div style={styles.sectionHeader}>
-              <h2 style={styles.sectionTitle}>Book Management</h2>
-              <Link to="/books/add" style={styles.addButton}>
-                + Add New Book
-              </Link>
-            </div>
-            <p style={styles.infoText}>
-              Click "Manage Books" tab or navigate to <Link to="/books">Books</Link> to manage the book inventory.
-            </p>
-          </div>
-        )}
-
-        {activeTab === 'users' && (
-          <div>
-            <div style={styles.sectionHeader}>
-              <h2 style={styles.sectionTitle}>User Management</h2>
-            </div>
-            <p style={styles.infoText}>
-              Navigate to <Link to="/admin/users">User Management</Link> to view and manage all users.
-            </p>
-          </div>
-        )}
-
-        {activeTab === 'reports' && (
-          <div>
-            <div style={styles.sectionHeader}>
-              <h2 style={styles.sectionTitle}>Reports & Analytics</h2>
-            </div>
-            <p style={styles.infoText}>
-              Navigate to <Link to="/admin/reports">Reports</Link> to view system analytics and overdue books.
-            </p>
-          </div>
-        )}
+      {/* Quick links */}
+      <h2 style={{ fontSize:'16px', fontWeight:700, color:'var(--text-primary)', marginBottom:'16px' }}>Quick Access</h2>
+      <div className="grid-3">
+        <Link to="/books" className="quick-card">
+          <div className="quick-card-icon">📚</div>
+          <h3>Manage Books</h3>
+          <p>Add, edit, search, and delete books</p>
+        </Link>
+        <Link to="/admin/users" className="quick-card">
+          <div className="quick-card-icon">👥</div>
+          <h3>Manage Users</h3>
+          <p>View, edit, and remove user accounts</p>
+        </Link>
+        <Link to="/admin/reports" className="quick-card">
+          <div className="quick-card-icon">📊</div>
+          <h3>Reports &amp; Analytics</h3>
+          <p>System stats, overdue books, top titles</p>
+        </Link>
       </div>
-    </div>
+    </PageLayout>
   );
-};
-
-const styles = {
-  container: {
-    minHeight: '100vh',
-    backgroundColor: '#f5f5f5',
-  },
-  header: {
-    backgroundColor: '#6c757d',
-    color: 'white',
-    padding: '20px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    margin: 0,
-    fontSize: '24px',
-  },
-  headerRight: {
-    display: 'flex',
-    gap: '15px',
-    alignItems: 'center',
-  },
-  userInfo: {
-    fontSize: '14px',
-  },
-  logoutButton: {
-    backgroundColor: '#dc3545',
-    color: 'white',
-    padding: '8px 16px',
-    borderRadius: '4px',
-    border: 'none',
-    cursor: 'pointer',
-    fontSize: '14px',
-  },
-  tabs: {
-    display: 'flex',
-    gap: '10px',
-    padding: '20px',
-    backgroundColor: 'white',
-    borderBottom: '1px solid #ddd',
-  },
-  tab: {
-    padding: '10px 20px',
-    border: 'none',
-    backgroundColor: 'transparent',
-    cursor: 'pointer',
-    fontSize: '16px',
-    borderBottom: '2px solid transparent',
-  },
-  activeTab: {
-    borderBottomColor: '#6c757d',
-    color: '#6c757d',
-    fontWeight: 'bold',
-  },
-  content: {
-    padding: '20px',
-    maxWidth: '1200px',
-    margin: '0 auto',
-  },
-  overview: {
-    backgroundColor: 'white',
-    padding: '30px',
-    borderRadius: '8px',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-  },
-  sectionTitle: {
-    margin: '0 0 20px 0',
-    color: '#333',
-    fontSize: '22px',
-  },
-  quickLinks: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-    gap: '20px',
-    marginTop: '20px',
-  },
-  quickLink: {
-    textDecoration: 'none',
-    color: 'inherit',
-  },
-  quickLinkCard: {
-    backgroundColor: '#f8f9fa',
-    padding: '30px',
-    borderRadius: '8px',
-    border: '1px solid #ddd',
-    textAlign: 'center',
-    transition: 'transform 0.2s',
-  },
-  sectionHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '20px',
-  },
-  addButton: {
-    backgroundColor: '#28a745',
-    color: 'white',
-    padding: '10px 20px',
-    borderRadius: '4px',
-    textDecoration: 'none',
-    fontSize: '14px',
-    fontWeight: '500',
-  },
-  infoText: {
-    color: '#666',
-    fontSize: '16px',
-  },
 };
 
 export default AdminDashboard;

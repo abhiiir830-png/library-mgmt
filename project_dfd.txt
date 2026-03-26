@@ -1,0 +1,279 @@
+Academic Library Book Management System — Data Flow Diagrams (DFD)
+
+Notes
+- These are DFD-style diagrams expressed using Mermaid flowcharts.
+- External entities: Student, Faculty, Librarian, Admin
+- Core data stores: Users, Books, Issues
+
+============================================================
+DFD LEVEL 0 (Context Diagram — Entire Project)
+============================================================
+
+```mermaid
+flowchart TD
+  Student[Student] -->|"Register/Login, Search, Request Issue, Return"| System["Library Management System"]
+  Faculty[Faculty] -->|"Login, Search, Request Issue, Renew, Return"| System
+  Librarian[Librarian] -->|"Login, Approve/Reject Requests, Receive Returns, View Overdue"| System
+  Admin[Admin] -->|"Login, Manage Books, Manage Users/Roles, View Reports"| System
+
+  System -->|"Auth status, Search results, Request status, Due dates, Confirmations, Reports"| Student
+  System -->|"Auth status, Search results, Request status, Due dates, Renew confirmation, Return confirmation"| Faculty
+  System -->|"Pending requests, Approval results, Return updates, Overdue list"| Librarian
+  System -->|"CRUD confirmations, User updates, Reports/Analytics"| Admin
+
+  System <--> MongoDB[(MongoDB Database)]
+```
+
+============================================================
+DFD LEVEL 1 (Decomposition — Entire Project)
+============================================================
+
+```mermaid
+flowchart TD
+  %% External Entities
+  Student[Student]
+  Faculty[Faculty]
+  Librarian[Librarian]
+  Admin[Admin]
+
+  %% Processes
+  P1["1. Authentication & Authorization"]
+  P2["2. Book Catalog & Search"]
+  P3["3. Issue Request Management"]
+  P4["4. Issue Approval/Reject"]
+  P5["5. Return Management"]
+  P6["6. Renewal Management"]
+  P7["7. User Management & Role Assignment"]
+  P8["8. Reports & Analytics"]
+
+  %% Data Stores
+  D1[(D1 Users)]
+  D2[(D2 Books)]
+  D3[(D3 Issues)]
+
+  %% Auth
+  Student -->|"register/login data"| P1
+  Faculty -->|"login data"| P1
+  Librarian -->|"login data"| P1
+  Admin -->|"login data"| P1
+  P1 -->|"JWT/session, auth status"| Student
+  P1 -->|"JWT/session, auth status"| Faculty
+  P1 -->|"JWT/session, auth status"| Librarian
+  P1 -->|"JWT/session, auth status"| Admin
+  P1 <-->|"create/read/update user"| D1
+
+  %% Book Catalog
+  Student -->|"search query"| P2
+  Faculty -->|"search query"| P2
+  Librarian -->|"view catalog"| P2
+  Admin -->|"view catalog"| P2
+  P2 -->|"book list/details"| Student
+  P2 -->|"book list/details"| Faculty
+  P2 -->|"book list/details"| Librarian
+  P2 -->|"book list/details"| Admin
+  P2 <-->|"read book inventory"| D2
+
+  %% Issue Request (Student/Faculty)
+  Student -->|"issue request (bookId)"| P3
+  Faculty -->|"issue request (bookId)"| P3
+  P3 -->|"request created (Pending), due date"| Student
+  P3 -->|"request created (Pending), due date"| Faculty
+  P3 <-->|"create/read issue request"| D3
+  P3 <-->|"check availability"| D2
+
+  %% Approval/Reject (Librarian)
+  Librarian -->|"approve/reject decision"| P4
+  P4 -->|"approval/rejection result"| Librarian
+  P4 <-->|"update issue status"| D3
+  P4 <-->|"decrement availableCopies on approve"| D2
+
+  %% Return (Student/Faculty/Librarian)
+  Student -->|"return request (issueId)"| P5
+  Faculty -->|"return request (issueId)"| P5
+  Librarian -->|"receive returned book (issueId)"| P5
+  P5 -->|"return confirmation"| Student
+  P5 -->|"return confirmation"| Faculty
+  P5 -->|"return processed"| Librarian
+  P5 <-->|"update issue (Returned, returnDate)"| D3
+  P5 <-->|"increment availableCopies"| D2
+
+  %% Renewal (Faculty)
+  Faculty -->|"renew request (issueId)"| P6
+  P6 -->|"renew confirmation, updated due date"| Faculty
+  P6 <-->|"update issue dueDate/status"| D3
+
+  %% User Management (Admin)
+  Admin -->|"create/update/delete user, assign role"| P7
+  P7 -->|"user/role update confirmation"| Admin
+  P7 <-->|"read/update users"| D1
+
+  %% Reports (Admin/Librarian)
+  Admin -->|"request analytics"| P8
+  Librarian -->|"request overdue list"| P8
+  P8 -->|"analytics dashboard"| Admin
+  P8 -->|"overdue list"| Librarian
+  P8 <-->|"read users"| D1
+  P8 <-->|"read books"| D2
+  P8 <-->|"read issues, compute overdue"| D3
+```
+
+============================================================
+DFD LEVEL 1.1 (Student Module)
+============================================================
+
+```mermaid
+flowchart TD
+  Student[Student]
+  Auth[Auth]
+  Catalog["Book Catalog/Search"]
+  IssueReq["Request Book Issue"]
+  MyIssues["View Issued Books & Due Dates"]
+  ReturnProc["Return Book"]
+
+  D1[(Users)]
+  D2[(Books)]
+  D3[(Issues)]
+
+  Student -->|"register/login"| Auth
+  Auth <--> D1
+  Auth -->|"auth status/token"| Student
+
+  Student -->|"search/view"| Catalog
+  Catalog <--> D2
+  Catalog -->|"results/details"| Student
+
+  Student -->|"request issue (bookId)"| IssueReq
+  IssueReq -->|"pending request + due date"| Student
+  IssueReq <--> D2
+  IssueReq <--> D3
+
+  Student -->|"view my issues"| MyIssues
+  MyIssues <--> D3
+  MyIssues -->|"issued list + due dates"| Student
+
+  Student -->|"return (issueId)"| ReturnProc
+  ReturnProc <--> D3
+  ReturnProc <--> D2
+  ReturnProc -->|"return confirmation"| Student
+```
+
+============================================================
+DFD LEVEL 1.2 (Faculty Module)
+============================================================
+
+```mermaid
+flowchart TD
+  Faculty[Faculty]
+  Auth[Auth]
+  Catalog["Book Catalog/Search"]
+  IssueReq["Request Book Issue"]
+  MyIssues["View Issue History"]
+  RenewProc["Renew Issued Book"]
+  ReturnProc["Return Book"]
+
+  D1[(Users)]
+  D2[(Books)]
+  D3[(Issues)]
+
+  Faculty -->|"login"| Auth
+  Auth <--> D1
+  Auth -->|"auth status/token"| Faculty
+
+  Faculty -->|"search/view"| Catalog
+  Catalog <--> D2
+  Catalog -->|"results/details"| Faculty
+
+  Faculty -->|"request issue (bookId)"| IssueReq
+  IssueReq -->|"pending request + due date"| Faculty
+  IssueReq <--> D2
+  IssueReq <--> D3
+
+  Faculty -->|"view history"| MyIssues
+  MyIssues <--> D3
+  MyIssues -->|"issue list"| Faculty
+
+  Faculty -->|"renew (issueId)"| RenewProc
+  RenewProc <--> D3
+  RenewProc -->|"updated due date"| Faculty
+
+  Faculty -->|"return (issueId)"| ReturnProc
+  ReturnProc <--> D3
+  ReturnProc <--> D2
+  ReturnProc -->|"return confirmation"| Faculty
+```
+
+============================================================
+DFD LEVEL 1.3 (Librarian Module)
+============================================================
+
+```mermaid
+flowchart TD
+  Librarian[Librarian]
+  Auth[Auth]
+  ViewPending["View Pending Requests"]
+  ApproveReject["Approve/Reject Request"]
+  ReceiveReturn["Receive Returned Books"]
+  OverdueRpt["Overdue & Fine Reports (View)"]
+
+  D1[(Users)]
+  D2[(Books)]
+  D3[(Issues)]
+
+  Librarian -->|"login"| Auth
+  Auth <--> D1
+  Auth -->|"auth status/token"| Librarian
+
+  Librarian -->|"view pending"| ViewPending
+  ViewPending <--> D3
+  ViewPending -->|"pending list"| Librarian
+
+  Librarian -->|"approve/reject (issueId)"| ApproveReject
+  ApproveReject <--> D3
+  ApproveReject <--> D2
+  ApproveReject -->|"decision result"| Librarian
+
+  Librarian -->|"receive return (issueId)"| ReceiveReturn
+  ReceiveReturn <--> D3
+  ReceiveReturn <--> D2
+  ReceiveReturn -->|"return processed"| Librarian
+
+  Librarian -->|"request overdue list"| OverdueRpt
+  OverdueRpt <--> D3
+  OverdueRpt -->|"overdue list"| Librarian
+```
+
+============================================================
+DFD LEVEL 1.4 (Admin Module)
+============================================================
+
+```mermaid
+flowchart TD
+  Admin[Admin]
+  Auth[Auth]
+  ManageBooks["Manage Books (Add/Edit/Delete)"]
+  ManageUsers["Manage Users & Assign Roles"]
+  Reports["Reports & Analytics"]
+
+  D1[(Users)]
+  D2[(Books)]
+  D3[(Issues)]
+
+  Admin -->|"login"| Auth
+  Auth <--> D1
+  Auth -->|"auth status/token"| Admin
+
+  Admin -->|"CRUD books"| ManageBooks
+  ManageBooks <--> D2
+  ManageBooks -->|"confirmation"| Admin
+
+  Admin -->|"CRUD users/assign roles"| ManageUsers
+  ManageUsers <--> D1
+  ManageUsers -->|"confirmation"| Admin
+
+  Admin -->|"request analytics/reports"| Reports
+  Reports <--> D1
+  Reports <--> D2
+  Reports <--> D3
+  Reports -->|"analytics dashboard"| Admin
+```
+

@@ -1,0 +1,262 @@
+/* ===== Admin Dark Theme - Hover & Transition Effects ===== */
+
+/* Navigation Tabs */
+.dark-tab {
+  padding: 12px 24px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  color: #94a3b8;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s ease;
+  letter-spacing: 0.3px;
+}
+
+.dark-tab:hover {
+  color: #3b82f6;
+  background-color: rgba(59, 130, 246, 0.08);
+  border-bottom-color: rgba(59, 130, 246, 0.4);
+}
+
+.dark-tab.active {
+  color: #3b82f6;
+  border-bottom-color: #3b82f6;
+  font-weight: 600;
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* Logout Button */
+.dark-logout-btn {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  padding: 8px 20px;
+  border-radius: 10px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.dark-logout-btn:hover {
+  background-color: #ef4444;
+  color: white;
+  border-color: #ef4444;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+}
+
+/* Quick Link Cards */
+.dark-quick-card {
+  background-color: #1e293b;
+  padding: 32px;
+  border-radius: 16px;
+  border: 1px solid #334155;
+  text-align: center;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: #f1f5f9;
+  display: block;
+}
+
+.dark-quick-card:hover {
+  transform: translateY(-4px);
+  border-color: #3b82f6;
+  box-shadow: 0 8px 30px rgba(59, 130, 246, 0.15);
+  background-color: #253449;
+}
+
+.dark-quick-card h3 {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  color: #f1f5f9;
+}
+
+.dark-quick-card p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+/* Stat Cards */
+.dark-stat-card {
+  background: linear-gradient(135deg, #1e293b, #253449);
+  padding: 24px;
+  border-radius: 16px;
+  text-align: center;
+  border: 1px solid #334155;
+  transition: all 0.3s ease;
+}
+
+.dark-stat-card:hover {
+  transform: translateY(-2px);
+  border-color: #3b82f6;
+  box-shadow: 0 6px 24px rgba(59, 130, 246, 0.12);
+}
+
+/* Detail Cards */
+.dark-detail-card {
+  background-color: #1e293b;
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid #334155;
+  transition: all 0.3s ease;
+}
+
+.dark-detail-card:hover {
+  border-color: #475569;
+}
+
+/* Overdue Cards */
+.dark-overdue-card {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.08), rgba(239, 68, 68, 0.03));
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  padding: 24px;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+}
+
+.dark-overdue-card:hover {
+  border-color: rgba(239, 68, 68, 0.5);
+  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.1);
+}
+
+/* Table Rows */
+.dark-table-row {
+  transition: background-color 0.2s ease;
+}
+
+.dark-table-row:hover {
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+/* Action Buttons */
+.dark-edit-btn {
+  padding: 6px 14px;
+  background-color: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.dark-edit-btn:hover {
+  background-color: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.dark-edit-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.dark-delete-btn {
+  padding: 6px 14px;
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.dark-delete-btn:hover {
+  background-color: #ef4444;
+  color: white;
+  border-color: #ef4444;
+}
+
+.dark-delete-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.dark-save-btn {
+  padding: 6px 14px;
+  background-color: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.dark-save-btn:hover {
+  background-color: #22c55e;
+  color: white;
+  border-color: #22c55e;
+}
+
+.dark-cancel-btn {
+  padding: 6px 14px;
+  background-color: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.dark-cancel-btn:hover {
+  background-color: #64748b;
+  color: white;
+  border-color: #64748b;
+}
+
+/* Add Button */
+.dark-add-btn {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  padding: 10px 24px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.dark-add-btn:hover {
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Dark Input */
+.dark-input {
+  padding: 8px 12px;
+  background-color: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  font-size: 14px;
+  width: 100%;
+  color: #f1f5f9;
+  transition: border-color 0.2s ease;
+}
+
+.dark-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* Link overrides in dark theme */
+.dark-content a {
+  color: #60a5fa;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.dark-content a:hover {
+  color: #93bbfd;
+}
