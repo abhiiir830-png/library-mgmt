@@ -12,7 +12,12 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors()); // basic: allow all origins
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    credentials: true,
+  })
+); // CORS config driven by FRONTEND_URL
 app.use(express.json());
 
 // Routes

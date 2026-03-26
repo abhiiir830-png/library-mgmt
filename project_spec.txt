@@ -94,11 +94,11 @@ BookID (Reference to Book)
 
 IssueDate (Timestamp)
 
-DueDate (Timestamp)
+DueDate (Timestamp) (Required)
 
 ReturnDate (Timestamp, Nullable)
 
-Status (String: 'Issued', 'Returned', 'Overdue')
+Status (String: 'Pending', 'Issued', 'Returned', 'Overdue') (Default: 'Pending')
 
 6. FEATURE WORKFLOW (The "User Journey")
 Login: User logs in and lands on the "Library Dashboard".
@@ -122,6 +122,8 @@ POST /api/auth/login -> Login user
 
 GET /api/books -> Get list of books
 
+GET /api/books/:id -> Get single book details
+
 POST /api/books -> Add new book (Admin only)
 
 PUT /api/books/:id -> Update book details (Admin only)
@@ -130,7 +132,25 @@ DELETE /api/books/:id -> Delete book (Admin only)
 
 POST /api/issues/request -> Request book issue
 
+GET /api/issues -> Get my issues (Student/Faculty)
+
+GET /api/issues/pending -> Get all pending requests (Librarian only)
+
 PUT /api/issues/:id/approve -> Approve issue (Librarian only)
 
+PUT /api/issues/:id/reject -> Reject issue request (Librarian only)
+
 PUT /api/issues/:id/return -> Return book
+
+PUT /api/issues/:id/renew -> Renew book (Faculty only)
+
+GET /api/users -> Get all users (Admin only)
+
+PUT /api/users/:id -> Update user (Admin only)
+
+DELETE /api/users/:id -> Delete user (Admin only)
+
+GET /api/reports/overdue -> Get overdue books (Librarian/Admin)
+
+GET /api/reports/analytics -> System analytics (Admin only)
 
